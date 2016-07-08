@@ -29,7 +29,7 @@ var mySequence = new Sortasync({
     return someApi.getFriendsByUser(user.id);
   },
   page: function(user) {
-    return someApi.getFriendsByUser(user.id);
+    return someApi.getPageByUser(user.id);
   },
   comments: function(page) {
     return someApi.getCommentsByPage(page.id);
