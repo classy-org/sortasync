@@ -22,19 +22,19 @@ var mySequence = new Sortasync({
   user: function() {
     return someApi.getCurrentUser();
   },
-  userGroup: function(user) {
+  group: function(user) {
     return someApi.getGroupByUser(user.id);
   },
-  userFriends: function(user) {
+  friends: function(user) {
     return someApi.getFriendsByUser(user.id);
   },
-  userPage: function(user) {
+  page: function(user) {
     return someApi.getFriendsByUser(user.id);
   },
-  userPageComments: function(userPage) {
+  comments: function(page) {
     return someApi.getCommentsByPage(page.id);
   },
-  userPageLikes: function(userPage) {
+  likes: function(page) {
     return someApi.getLikesByPage(page.id);
   }
 });
@@ -43,17 +43,19 @@ mySequence
   .exec()
   .then(function(response) {
     doSomethingWith(response.user);
-    doSomethingWith(response.userGroup);
-    doSomethingWith(response.userFriends);
+    doSomethingWith(response.group);
+    doSomethingWith(response.friends);
     doSomethingWith(response.page);
-    doSomethingWith(response.pageComments);
-    doSomethingWith(response.pageLikes);
-  });
+    doSomethingWith(response.comments);
+    doSomethingWith(response.likes);
+  }));
 ```
 
-In the example above, `userGroup`, `userFriends`, and `userPage` all depend on the resolved value of the `user` operation. They will fire concurrently as soon as `user` is resolved. Likewise, `userPageComments` and `userPageLikes`  depend on the resolved value of the `userPage` operation, so they will await that resolution and then fire concurrently.
+In the example above, `group`, `friends`, and `page` all depend on the resolved value of the `user` operation. They will fire concurrently as soon as `user` is resolved. 
 
-The operations above are written roughly in order for clarity, but this is not required (as objects have no concept of "order" anyway).
+Likewise, `comments` and `likes`  depend on the resolved value of the `page` operation, so they will await that resolution and then fire concurrently.
+
+The operations above are written in order for clarity, but this is not required (as objects have no concept of "order" anyway).
 
 ## Kickstart with arguments
 
@@ -174,4 +176,5 @@ Sortasync au naturel: CommonJS, ES2015. Use with Node 6+. 1kb gzipped.
 Classy is a technology company that helps organizations mobilize their community to solve social problems more effectively and efficiently. Since launching in 2011, Classy has helped more than 2,500 social enterprises including Oxfam, The World Food Programme and National Geographic to raise hundreds of millions of dollars. Classy also hosts the Collaborative and Classy Awards to recognize excellence in social innovation. Based in San Diego, CA, Classy employs a staff of 165 people and is backed by investors including Mithril and Salesforce Ventures.
 
 Learn more: https://www.classy.org
+
 And, we're hiring: http://www.classy.org/careers
