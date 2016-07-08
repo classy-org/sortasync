@@ -1,0 +1,27 @@
+{
+  "name": "sortasync",
+  "description": "A promise-powered utility for interdependent async calls",
+  "main": "dist/sortasync.bundle.js",
+  "authors": [
+    "Tom Borger <thomas.borger@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "async",
+    "sort",
+    "promise",
+    "q",
+    "bluebird",
+    "dependency",
+    "injection"
+  ],
+  "homepage": "https://github.com/classy-org/sortasync",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "ignore": [
+    "node_modules"
+  ]
+}
