@@ -11,116 +11,91 @@ chai.use(chaiAsPromised);
  * Test Utils
  * -------------------------------------------------------------------------- */
 
-function getA() {
+function asyncTest(cb) {
   var deferred = Q.defer();
   setTimeout(function() {
-    deferred.resolve('A');
-  }, 15);
-
+    cb(deferred);
+  });
   return deferred.promise;
+}
+
+
+/* -------------------------------------------------------------------------- *
+ * Test Promises
+ * -------------------------------------------------------------------------- */
+
+function getA() {
+  return asyncTest(function(deferred) {
+    deferred.resolve('A');
+  });
 }
 
 function getB() {
-  var deferred = Q.defer();
-  setTimeout(function() {
+  return asyncTest(function(deferred) {
     deferred.resolve('B');
-  }, 10);
-
-  return deferred.promise;
+  });
 }
 
 function oneDep(getA) {
-  var deferred = Q.defer();
-  setTimeout(function() {
+  return asyncTest(function(deferred) {
     deferred.resolve(getA + 'C');
-  }, 5);
-
-  return deferred.promise;
+  });
 }
 
 function twoDeps(getA, getB) {
-  var deferred = Q.defer();
-  setTimeout(function() {
+  return asyncTest(function(deferred) {
     deferred.resolve(getA + getB + 'D');
-  }, 5);
-
-  return deferred.promise;
+  });
 }
 
 function nestedDeps(getA, oneDep) {
-  var deferred = Q.defer();
-  setTimeout(function() {
+  return asyncTest(function(deferred) {
     deferred.resolve(getA + oneDep + 'E');
-  }, 5);
-
-  return deferred.promise;
+  });
 }
 
 function deeplyNestedDeps(oneDep, nestedDeps) {
-  var deferred = Q.defer();
-  setTimeout(function() {
+  return asyncTest(function(deferred) {
     deferred.resolve(oneDep + nestedDeps + 'F');
-  }, 5);
-
-  return deferred.promise;
+  });
 }
 
 function deeplyNestedWithArgs(oneDep, arg1, arg2, nestedDeps) {
-  var deferred = Q.defer();
-  setTimeout(function() {
+  return asyncTest(function(deferred) {
     deferred.resolve(oneDep + arg1 + arg2 + nestedDeps + 'G');
-  }, 5);
-
-  return deferred.promise;
+  });
 }
 
 function topLevelRejection() {
-  var deferred = Q.defer();
-  setTimeout(function() {
+  return asyncTest(function(deferred) {
     deferred.reject('top level rejection reason');
-  }, 5);
-
-  return deferred.promise;
+  });
 }
 
 function dependentRejection(getB) {
-  var deferred = Q.defer();
-  setTimeout(function() {
+  return asyncTest(function(deferred) {
     deferred.reject('dependent rejection reason');
-  }, 5);
-
-  return deferred.promise;
+  });
 }
 
 function dependsOnRejected(topLevelRejection) {
-  var deferred = Q.defer();
-  setTimeout(function() {
+  return asyncTest(function(deferred) {
     deferred.resolve();
-  }, 5);
-
-  return deferred.promise;
+  });
 }
 
 function nonStringRejection(getB) {
-  var deferred = Q.defer();
-  setTimeout(function() {
+  return asyncTest(function(deferred) {
     deferred.reject({ arbitrary: 'object' });
-  }, 5);
-
-  return deferred.promise;
+  });
 }
 
 function exceptionError() {
-  var deferred = Q.defer();
-  setTimeout(function() {
-    deferred.resolve('exception error');
-  }, 5);
-
   notafunction();
-
-  return deferred.promise;
+  return asyncTest(function(deferred) {
+    deferred.resolve(getA + 'C');
+  });
 }
-
 
 
 /* -------------------------------------------------------------------------- *
@@ -335,8 +310,8 @@ describe('sortasync', function() {
   it('should gracefully handle non-string rejection', function() {
     config = {
       getA: getA,
-      nonStringRejection: nonStringRejection,
-      getB: getB
+      getB: getB,
+      nonStringRejection: nonStringRejection
     };
     return expect(new Sortasync(config).exec()).to.eventually.be.rejected.and.satisfy(function(err) {
       return err instanceof Error
@@ -350,8 +325,8 @@ describe('sortasync', function() {
   it('should gracefully handle general exceptions', function() {
     config = {
       getA: getA,
-      exceptionError: exceptionError,
-      getB: getB
+      getB: getB,
+      exceptionError: exceptionError
     };
     return expect(new Sortasync(config).exec()).to.eventually.be.rejected.and.satisfy(function(err) {
       return err instanceof Error
