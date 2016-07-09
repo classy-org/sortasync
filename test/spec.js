@@ -208,6 +208,32 @@ describe('sortasync', function() {
     });
   });
 
+  it ('should support explicit dependency annotation', function() {
+    config = {
+      getA: [getA],
+      getB: [getB],
+      twoDeps: ['getA', 'getB', twoDeps]
+    };
+    return expect(new Sortasync(config).exec()).to.eventually.deep.equal({ 
+      getA: 'A', 
+      getB: 'B', 
+      twoDeps: 'ABD' 
+    });
+  });
+
+  it ('should support reordering via explicit dependency annotation', function() {
+    config = {
+      getA: [getA],
+      getB: [getB],
+      twoDeps: ['getB', 'getA', twoDeps]
+    };
+    return expect(new Sortasync(config).exec()).to.eventually.deep.equal({ 
+      getA: 'A', 
+      getB: 'B', 
+      twoDeps: 'BAD' 
+    });
+  });
+
   it('should handle functions with nested dependencies', function() {
     config = {
       getA: getA,
